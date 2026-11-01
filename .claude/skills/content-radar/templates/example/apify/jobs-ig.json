@@ -1,0 +1,27 @@
+{
+ "out": "ig",
+ "jobs": [
+  {
+   "name": "ig-profile",
+   "actor": "apify~instagram-profile-scraper",
+   "max_usd": 0.05,
+   "input": {
+    "usernames": [
+     "example_studio"
+    ]
+   }
+  },
+  {
+   "name": "ig-posts",
+   "actor": "apify~instagram-post-scraper",
+   "max_usd": 0.15,
+   "input": {
+    "username": [
+     "example_studio"
+    ],
+    "resultsLimit": 100,
+    "dataDetailLevel": "basicData"
+   }
+  }
+ ]
+}

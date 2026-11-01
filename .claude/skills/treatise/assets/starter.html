@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Название темы</title>
+<meta name="description" content="Одно предложение: о чём страница и что на ней можно потрогать.">
+<!-- Стартовый каркас трактата: один самодостаточный файл. Шрифты с Google Fonts необязательны:
+     без сети страница откроется на системных шрифтах. Замените отмеченные «ЗАМЕНИТЬ» места. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Literata:opsz,wght@7..72,400;7..72,500&display=swap">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/* ===== токены ===== */
+:root{
+  --ink:#182b3c;--muted:#526371;--paper:#fff;--wash:#f3f6f9;--wash-2:#e9eef4;--line:#d5dde6;
+  --blue:#164ccd;--good:#1f7a55;--bad:#b4442f;--gold:#a8740c;
+  --serif:'Literata',Georgia,'Times New Roman',serif;
+  --sans:'Golos Text',-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  --spring:cubic-bezier(.34,1.32,.5,1);--out:cubic-bezier(.2,.8,.2,1);
+  color-scheme:light
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --ink:#e5edf5;--muted:#93a5b8;--paper:#0f1822;--wash:#16222f;--wash-2:#1f2f40;--line:#2a3b4d;
+  --blue:#6c95ff;--good:#52c08e;--bad:#ff8e75;--gold:#e0a92e;color-scheme:dark}}
+/* цвета осей (глав): подпись главы, точка, кнопка внутри сцены. Замените на свои. */
+[data-v=a]{--vc:#164ccd}[data-v=b]{--vc:#b4442f}[data-v=c]{--vc:#1f7a55}[data-v=d]{--vc:#9a6a0c}[data-v=e]{--vc:#6b3fa0}
+
+/* ===== база ===== */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:4.5rem}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:1.06rem;line-height:1.7;-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:var(--serif);font-weight:500;letter-spacing:-.02em;text-wrap:balance;margin:0}
+p{margin:.9rem 0}
+a{color:var(--blue)}
+button{font:inherit;color:inherit;cursor:pointer}
+.shell{max-width:1240px;margin:0 auto;padding:0 3rem}
+@media(max-width:1100px){.shell{padding:0 2rem}}@media(max-width:800px){.shell{padding:0 16px}}
+.skip{position:absolute;left:-999px}.skip:focus{left:8px;top:8px;background:#fff;color:#000;padding:.5rem;z-index:9}
+
+/* шапка: первая ссылка «Содержание» нужна на телефоне, где оглавление скрыто */
+.masthead{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);font-family:var(--sans)}
+.masthead-inner{display:flex;align-items:center;gap:1.2rem;min-height:56px}
+.brand{font-weight:600;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.topnav{display:flex;gap:1rem;margin-left:auto;font-size:.9rem;overflow-x:auto}.topnav a{color:var(--muted);text-decoration:none;white-space:nowrap;padding:.8rem 0}
+.read-progress{height:2px;background:var(--blue);transform-origin:0 50%;transform:scaleX(0)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:3rem;padding:4rem 0 2.5rem;align-items:center}
+@media(max-width:800px){.hero{grid-template-columns:1fr;padding:2.2rem 0 1.2rem;gap:1.6rem}}
+.edition{font-family:var(--sans);font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 .8rem}
+.hero h1{font-size:clamp(2.4rem,6vw,4.4rem);line-height:1.04;letter-spacing:-.045em}
+.dek{font-size:1.2rem;color:var(--muted);max-width:34ch}
+.hero-note{font-family:var(--sans);font-size:.92rem;color:var(--muted)}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;font-family:var(--sans)}
+.primary-link{background:var(--ink);color:var(--paper);border-radius:999px;padding:.75rem 1.3rem;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
+.hero-index{list-style:none;padding:0;margin:0;font-family:var(--sans);display:grid;gap:.4rem}
+.hero-index a{display:grid;grid-template-columns:14px 1fr;gap:.8rem;padding:.7rem .9rem;border-radius:12px;text-decoration:none;color:var(--ink);align-items:start}
+.hero-index a:hover{background:var(--wash)}
+.hero-index .dot{width:10px;height:10px;border-radius:50%;background:var(--vc,var(--blue));margin-top:.4rem}
+.hero-index small{display:block;color:var(--muted)}
+
+/* читатель: оглавление слева, колонка текста справа */
+.reader-layout{display:grid;grid-template-columns:220px minmax(0,820px);gap:3rem}
+@media(max-width:800px){.reader-layout{grid-template-columns:1fr}.toc{display:none}}
+.toc{position:sticky;top:5rem;align-self:start;font-family:var(--sans);font-size:.9rem}
+.toc ol{list-style:none;padding:0;margin:.5rem 0 0}.toc a{display:block;padding:.35rem 0;color:var(--muted);text-decoration:none}.toc a.is-on{color:var(--ink);font-weight:600}
+.toc-title{font-weight:600;margin:0}
+.mobile-toc{display:none;font-family:var(--sans);border:1px solid var(--line);border-radius:12px;padding:.2rem 1rem;margin:0 0 1.5rem}
+@media(max-width:800px){.mobile-toc{display:block}}
+.mobile-toc summary{min-height:44px;display:flex;align-items:center;font-weight:600}
+
+.chapter{padding:2.5rem 0;border-top:1px solid var(--line)}
+.kicker{display:flex;align-items:center;gap:.55rem;font-family:var(--sans);font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--vc,var(--blue));margin:0 0 .6rem}
+.kicker::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor}
+.chapter h2{font-size:clamp(1.7rem,3.4vw,2.3rem);line-height:1.15}
+.lead{font-size:1.18rem;color:#2b3f52}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .lead,:root:not([data-theme=light]) .m-text{color:var(--ink)}}
+.bridge{font-family:var(--sans);color:var(--muted);border-left:2px solid var(--line);padding-left:1rem}
+
+/* ===== сцены ===== */
+html:not(.js) [data-js]{display:none!important}
+html.js .m-nojs{display:none}
+.m-nojs{font-family:var(--sans);font-size:.95rem;background:var(--paper);border-radius:10px;padding:.9rem 1rem}
+.m-scene{position:relative;margin:2rem 0;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,var(--paper),var(--wash));padding:1.6rem 1.6rem 1.2rem;font-family:var(--sans);overflow:hidden;transition:opacity .6s var(--out),transform .7s var(--out)}
+.m-reveal .m-scene:not(.is-seen){opacity:.6;transform:translateY(14px)}
+.m-head{display:grid;grid-template-columns:auto 1fr;column-gap:1rem;align-items:baseline}
+.m-num{font-size:.8rem;font-weight:600;letter-spacing:.08em;color:var(--muted)}
+.m-scene h3{font-size:1.6rem;line-height:1.2}
+.m-text{grid-column:2;margin:.5rem 0 0;max-width:60ch;color:#2b3f52;line-height:1.55}
+.m-stage{margin:1.4rem 0 .2rem}
+.m-foot{display:flex;gap:1rem;justify-content:space-between;align-items:flex-start;border-top:1px solid var(--line);padding-top:.85rem;margin-top:1.1rem}
+.m-cap{font-size:.9rem;line-height:1.5;color:var(--muted);margin:0}
+.m-replay{flex:none;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:.35rem .9rem;min-height:44px;font-size:.84rem}
+.m-sum{font-size:.98rem;line-height:1.55;margin:1rem 0 0;min-height:3.1em}   /* фиксированная высота: текст сцены не двигает ползунок */
+.m-note{font-size:.8rem;color:var(--muted);font-family:var(--sans)}
+@media(max-width:640px){.m-scene{padding:1.2rem 1rem 1rem;border-radius:16px}.m-head{grid-template-columns:1fr}.m-text{grid-column:1}.m-foot{flex-direction:column}}
+
+/* контролы: зоны нажатия от 44px, поля ввода 16px */
+.m-btn{border:0;border-radius:999px;background:var(--ink);color:var(--paper);padding:.6rem 1.25rem;min-height:46px;font-size:.95rem}
+.m-btn.is-on{background:var(--vc,var(--blue))}
+.m-chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:.5rem .9rem;min-height:44px;font-size:.92rem}
+.m-chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.m-seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--wash-2);border-radius:12px;padding:4px}
+.m-seg button{border:0;background:none;border-radius:9px;padding:.55rem 1rem;min-height:44px;color:var(--muted)}
+.m-seg button[aria-checked=true]{background:var(--paper);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.m-seg button.hint{animation:hint 1.5s ease-in-out 2}
+@keyframes hint{50%{box-shadow:0 0 0 3px rgba(22,76,205,.25)}}
+.m-range{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin:0;touch-action:pan-y;--fill:50%}
+.m-range::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(90deg,var(--ink) var(--fill),var(--wash-2) var(--fill))}
+.m-range::-moz-range-track{height:6px;border-radius:999px;background:var(--wash-2)}
+.m-range::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;margin-top:-11px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2),0 3px 10px rgba(0,0,0,.18)}
+.m-range::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#fff;border:0}
+.m-range:focus-visible,.m-btn:focus-visible,.m-chip:focus-visible,.m-seg button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.m-row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+
+/* суть: три строки */
+.m-gist{list-style:none;padding:0;margin:2rem 0 0;counter-reset:g}
+.m-gist li{counter-increment:g;display:grid;grid-template-columns:2.4rem 1fr;gap:0 .8rem;padding:1rem 0;border-top:1px solid var(--line);font-family:var(--sans);line-height:1.55}
+.m-gist li:last-child{border-bottom:1px solid var(--line)}
+.m-gist li::before{content:counter(g,decimal-leading-zero);font-family:var(--serif);font-size:1.25rem;color:var(--muted)}
+.m-gist b{display:block;font-family:var(--serif);font-weight:500;font-size:1.18rem}
+
+/* таблица «как думают / как на деле / что следует» */
+.m-trade{margin:1.8rem 0;font-family:var(--sans);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.m-trade-head,.m-trade-row{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:1rem;padding:.85rem 1.15rem}
+.m-trade-head{background:var(--wash);font-size:.76rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.m-trade-row+.m-trade-row{border-top:1px solid var(--line)}.m-trade-row p{margin:0;font-size:.95rem;line-height:1.5}
+.t-lab{display:none}
+@media(max-width:800px){.m-trade{border:0;display:grid;gap:.7rem;overflow:visible}.m-trade-head{display:none}
+  .m-trade-row{grid-template-columns:1fr;border:1px solid var(--line);border-radius:14px;padding:1rem}
+  .t-lab{display:block;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}}
+
+/* практика и финал */
+.m-deal{display:grid;grid-template-columns:1.4fr 1fr;gap:1rem;margin:1.8rem 0;font-family:var(--sans)}
+.m-deal>div{border-radius:18px;padding:1.5rem}.m-deal-main{border:2px solid var(--ink)}.m-deal-lever{background:var(--wash);border:1px solid var(--line)}
+.m-deal-k{font-size:.76rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 .6rem}
+.m-deal-h{font-family:var(--serif);font-size:1.5rem;line-height:1.3;margin:0 0 .8rem}
+.m-deal-metric{border-top:1px solid var(--line);padding-top:.8rem;font-weight:500}
+@media(max-width:800px){.m-deal{grid-template-columns:1fr}}
+.m-final{margin:2.4rem 0 0;padding:2rem 1.7rem;border-radius:20px;background:var(--ink);color:var(--paper)}
+.m-final p{margin:0;font-size:clamp(1.3rem,2.6vw,1.8rem);line-height:1.38}.m-final .f-on{color:#a9e3c6}
+.m-final .m-final-s{font-family:var(--sans);font-size:.95rem;opacity:.8;margin-top:1rem}
+
+/* ===== шторки: нативный details, работает без JS ===== */
+.drawers-bar{display:flex;justify-content:space-between;align-items:center;font-family:var(--sans);margin-top:2rem}
+.drawers-label{font-size:.76rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+.drawers-all{border:0;background:none;color:var(--blue);min-height:44px}
+.drawer{--dk:var(--blue);margin:.8rem 0;background:var(--paper);border:1px solid var(--line);border-radius:12px;font-family:var(--sans)}
+.drawer[data-kind=practice]{--dk:var(--gold)}.drawer[data-kind=limits]{--dk:var(--bad)}
+.drawer>summary{list-style:none;display:grid;grid-template-columns:1fr 1.75rem;gap:.1rem .75rem;align-items:center;min-height:56px;padding:.7rem .9rem .75rem 1rem;cursor:pointer}
+.drawer>summary::-webkit-details-marker{display:none}
+.drawer>summary::after{content:"";grid-column:2;grid-row:1/span 2;width:1.75rem;height:1.75rem;border-radius:50%;background:var(--wash) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%23526371' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") center/14px no-repeat;transition:transform .3s var(--out)}
+.drawer[open]>summary::after{transform:rotate(180deg)}
+.drawer>summary:focus-visible{outline:3px solid var(--dk);outline-offset:2px}
+.drawer-tag{font-size:.74rem;font-weight:600;color:var(--dk)}
+.drawer-title{font-weight:500;line-height:1.38}
+.drawer-body{padding:.15rem 1rem 1.05rem;font-family:var(--serif);line-height:1.65}
+.drawer-body p{margin:.6rem 0}.drawer-cite{font-family:var(--sans);font-size:.85rem;color:var(--muted)}
+
+/* источники */
+.sources ol{font-family:var(--sans);font-size:.92rem;color:var(--muted);padding-left:1.2rem}.sources li{margin:.5rem 0}
+.footer{border-top:1px solid var(--line);margin-top:3rem;padding:1.5rem 0;font-family:var(--sans);font-size:.88rem;color:var(--muted)}
+
+@media(prefers-reduced-motion:reduce){*{transition-duration:.01s!important;animation:none!important}.m-reveal .m-scene:not(.is-seen){opacity:1;transform:none}}
+@media print{.m-scene [data-js]{display:none!important}.m-scene .m-nojs{display:block!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">К содержанию</a>
+
+<header class="masthead"><div class="shell masthead-inner">
+  <span class="brand">ЗАМЕНИТЬ: серия</span>
+  <nav class="topnav" aria-label="Основная навигация"><a href="#toc-m">Содержание</a><a href="#essence">Суть</a><a href="#axis-a">Ось A</a><a href="#sources">Источники</a></nav>
+</div><div class="read-progress" aria-hidden="true"></div></header>
+
+<main id="main">
+<div class="shell">
+<section class="hero" aria-labelledby="title">
+  <div>
+    <p class="edition">Рубрика, рубрика</p>
+    <h1 id="title">Образ, а не название темы</h1>
+    <p class="dek">Одно-два предложения: крючок, который объясняет, зачем читать.</p>
+    <p class="hero-note">Сцены можно потрогать. Доказательства спрятаны в шторках, открывайте, если интересно.</p>
+    <div class="hero-actions"><a class="primary-link" href="#essence">Суть в одной сцене</a></div>
+  </div>
+  <ol class="hero-index">
+    <li><a href="#axis-a" data-v="a"><span class="dot"></span><span><strong>Ось A</strong><small>Подпись-вывод</small></span></a></li>
+    <li><a href="#axis-b" data-v="b"><span class="dot"></span><span><strong>Ось B</strong><small>Подпись-вывод</small></span></a></li>
+  </ol>
+</section>
+</div>
+
+<div class="shell reader-layout">
+<nav class="toc" aria-label="Оглавление"><p class="toc-title">Содержание</p>
+  <ol><li><a href="#essence">Суть</a></li><li><a href="#axis-a">Ось A</a></li><li><a href="#axis-b">Ось B</a></li><li><a href="#sources">Источники</a></li></ol></nav>
+
+<div class="reading">
+<details class="mobile-toc" id="toc-m"><summary>Содержание</summary>
+  <ol><li><a href="#essence">Суть</a></li><li><a href="#axis-a">Ось A</a></li><li><a href="#axis-b">Ось B</a></li><li><a href="#sources">Источники</a></li></ol></details>
+
+<!-- ===== Суть: сцена + три строки + граница знания ===== -->
+<section class="chapter" id="essence" data-v="a" aria-labelledby="essence-title">
+  <p class="kicker">Суть</p>
+  <h2 id="essence-title">Утверждение, которое страница доказывает</h2>
+  <p class="lead">Короткий ввод: механизм в двух предложениях.</p>
+
+  <article class="m-scene" data-scene="threshold" data-v="a" aria-labelledby="sc1-t">
+    <div class="m-head"><span class="m-num">01</span><h3 id="sc1-t">Порог</h3><p class="m-text">Двигайте ползунок: сигнал проходит, только когда сумма входов выше порога.</p></div>
+    <div class="m-stage">
+      <div class="m-row" style="margin-bottom:.4rem"><label for="th-in" style="font-size:.9rem">Сумма входов</label></div>
+      <input class="m-range" id="th-in" type="range" min="0" max="100" value="30" data-js aria-describedby="th-sum">
+      <svg viewBox="0 0 300 60" width="100%" style="margin-top:.8rem" role="img" aria-label="Уровень сигнала и порог" data-js>
+        <rect x="0" y="20" width="300" height="20" rx="10" fill="var(--wash-2)"/>
+        <rect id="th-bar" x="0" y="20" width="0" height="20" rx="10" fill="var(--vc)"/>
+        <line x1="180" x2="180" y1="8" y2="52" stroke="var(--ink)" stroke-width="2"/>
+        <text x="180" y="6" text-anchor="middle" font-size="12" fill="var(--muted)">порог</text>
+      </svg>
+      <p class="m-sum" id="th-sum" aria-live="polite" data-js></p>
+      <p class="m-nojs">Тот же вывод текстом, для печати и без JS: пока сумма входов ниже порога, сигнал не передаётся; выше порога передаётся целиком.</p>
+    </div>
+    <div class="m-foot"><p class="m-cap">Схема.</p><button class="m-replay" type="button" data-replay data-js>Сначала</button></div>
+  </article>
+
+  <ol class="m-gist">
+    <li><span><b>Первое.</b> Строка-вывод в одну мысль.</span></li>
+    <li><span><b>Второе.</b> Строка-вывод в одну мысль.</span></li>
+    <li><span><b>Третье.</b> Строка-вывод в одну мысль.</span></li>
+  </ol>
+
+  <div class="drawers-bar"><p class="drawers-label">Чего наука пока не знает</p><button class="drawers-all" type="button" data-drawers-all hidden>Раскрыть все</button></div>
+  <div class="drawers"><details class="drawer" data-kind="limits"><summary><span class="drawer-tag">Граница знания</span><span class="drawer-title">Что здесь пока не доказано</span></summary>
+    <div class="drawer-body"><p>Что известно, на ком проверяли, что остаётся спорным.</p><p class="drawer-cite">Автор, год, журнал</p></div></details></div>
+  <p class="bridge">Одна фраза-мост к следующей главе.</p>
+</section>
+
+<!-- ===== Ось A / B: утверждение, сцена, вывод, шторки ===== -->
+<section class="chapter" id="axis-a" data-v="a" aria-labelledby="axis-a-t">
+  <p class="kicker">Ось A</p><h2 id="axis-a-t">Утверждение главы</h2>
+  <p class="lead">Подводка: вопрос читателю или наблюдение.</p>
+  <p>Сюда ставится сцена (<code>article.m-scene</code> по образцу выше), затем вывод в два-четыре предложения и шторки с доказательствами.</p>
+  <div class="drawers-bar"><p class="drawers-label">Доказательства</p></div>
+  <div class="drawers"><details class="drawer" data-kind="science"><summary><span class="drawer-tag">Исследование</span><span class="drawer-title">Вывод одной фразой</span></summary>
+    <div class="drawer-body"><p>Что сделали, на ком, что нашли, оговорка.</p><p class="drawer-cite">Автор, год, журнал</p></div></details></div>
+</section>
+
+<section class="chapter" id="axis-b" data-v="b" aria-labelledby="axis-b-t">
+  <p class="kicker">Ось B</p><h2 id="axis-b-t">Утверждение главы</h2>
+  <div class="m-trade" role="table" aria-label="Как думают и как на деле">
+    <div class="m-trade-head" role="row"><span>Как часто думают</span><span>Как на деле</span><span>Что следует</span></div>
+    <div class="m-trade-row" role="row"><p><span class="t-lab">Как часто думают</span>Распространённое мнение.</p><p><span class="t-lab">Как на деле</span>Что показали данные.</p><p><span class="t-lab">Что следует</span>Практический вывод.</p></div>
+  </div>
+  <div class="m-deal"><div class="m-deal-main"><p class="m-deal-k">Ритм, срок</p><p class="m-deal-h">Один шаг.</p><p>Почему именно он.</p><p class="m-deal-metric">Чем измерить до и после.</p></div>
+  <div class="m-deal-lever"><p class="m-deal-k">Запасной ход, 10 секунд</p><p>Что сделать, если нет сил на основной шаг.</p></div></div>
+  <div class="m-final"><p><span>Первая половина формулы.</span> <span class="f-on">Вторая половина.</span></p><p class="m-final-s">Как пользоваться этой схемой дальше.</p></div>
+</section>
+
+<section class="chapter sources" id="sources" aria-labelledby="sources-title">
+  <p class="kicker">Библиотека</p><h2 id="sources-title">Источники</h2>
+  <p class="m-note">Все сцены на странице – схемы: они показывают механизм и ничего не измеряют. Числа подписаны источником.</p>
+  <ol><li>Автор, А. (Год). Название работы. <i>Журнал, том</i>(номер), страницы. https://doi.org/…</li></ol>
+</section>
+</div>
+</div>
+</main>
+<footer class="footer"><div class="shell"><p>ЗАМЕНИТЬ: серия · Месяц Год</p></div></footer>
+
+<script>
+/* ===== помощники: window.Treatise ===== */
+(function () {
+  'use strict';
+  var mq = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+  var T = {
+    reduce: mq.matches,
+    $: function (s, r) { return (r || document).querySelector(s); },
+    $$: function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); },
+    clamp: function (v, a, b) { return Math.max(a, Math.min(b, v)); },
+    el: function (tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; },
+    svg: function (tag, attrs) { var n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (var k in attrs) n.setAttribute(k, attrs[k]); return n; },
+    plural: function (n, one, few, many) { var a = n % 10, b = n % 100; return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many; },
+    seeded: function (seed) { var s = seed >>> 0; return function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; },
+    /* таймеры сцены, снимаются при перезапуске */
+    Timers: function () { var l = []; return { add: function (fn, ms) { l.push(setTimeout(fn, T.reduce ? 0 : ms)); }, clear: function () { l.forEach(clearTimeout); l = []; } }; },
+    /* пружина: стартует с текущего значения, её можно перебить на полпути */
+    Spring: function (value, zeta, response, onUpdate) {
+      var k = Math.pow(2 * Math.PI / response, 2), c = 4 * Math.PI * zeta / response;
+      var s = { x: value, v: 0, target: value, raf: 0 };
+      function step(prev) { return function (now) {
+        var dt = Math.min(0.032, (now - prev) / 1000);
+        for (var i = 0; i < 4; i++) { var a = -k * (s.x - s.target) - c * s.v; s.v += a * dt / 4; s.x += s.v * dt / 4; }
+        var eps = 0.002 * Math.max(1, Math.abs(s.target));
+        if (Math.abs(s.v) < eps && Math.abs(s.x - s.target) < eps) { s.x = s.target; s.v = 0; onUpdate(s.x); s.raf = 0; return; }
+        onUpdate(s.x); s.raf = requestAnimationFrame(step(now)); }; }
+      s.to = function (t) { s.target = t;
+        if (T.reduce) { cancelAnimationFrame(s.raf); s.raf = 0; s.x = t; s.v = 0; onUpdate(t); return; }
+        if (!s.raf) s.raf = requestAnimationFrame(function (n) { s.raf = requestAnimationFrame(step(n)); }); };
+      s.set = function (t) { cancelAnimationFrame(s.raf); s.raf = 0; s.x = s.target = t; s.v = 0; onUpdate(t); };
+      return s;
+    },
+    /* сегментный переключатель: клик, стрелки; кнопки с data-mode; hint(i) подсвечивает кнопку, не переключая её за читателя */
+    segment: function (box, onChange) {
+      var btns = T.$$('button', box);
+      function set(i, focus, silent) {
+        btns.forEach(function (b, j) { b.setAttribute('aria-checked', String(i === j)); b.tabIndex = i === j ? 0 : -1; });
+        if (focus) btns[i].focus(); if (!silent) onChange(btns[i].dataset.mode, i); }
+      btns.forEach(function (b, i) {
+        b.addEventListener('click', function () { set(i); });
+        b.addEventListener('keydown', function (e) { if (/^Arrow/.test(e.key)) { e.preventDefault(); set((i + (/Left|Up/.test(e.key) ? btns.length - 1 : 1)) % btns.length, true); } });
+      });
+      set(0, false, true);
+      return { set: function (i) { set(i, false, true); }, hint: function (i) { btns[i].classList.add('hint'); setTimeout(function () { btns[i].classList.remove('hint'); }, 3200); } };
+    },
+    rangeFill: function (r) { r.style.setProperty('--fill', (r.value - r.min) / (r.max - r.min) * 100 + '%'); },
+    /* цикл кадров, который спит вне экрана и в фоновой вкладке */
+    Loop: function (frame) {
+      var on = false, raf = 0, last = 0;
+      function tick(now) { var dt = Math.min(0.05, (now - (last || now)) / 1000); last = now; if (frame(dt, now) === false) { on = false; raf = 0; return; } raf = requestAnimationFrame(tick); }
+      var l = { start: function () { if (on || document.hidden) return; on = true; last = 0; raf = requestAnimationFrame(tick); },
+                stop: function () { on = false; cancelAnimationFrame(raf); raf = 0; } };
+      document.addEventListener('visibilitychange', function () { if (document.hidden) l.stop(); });
+      return l;
+    }
+  };
+  var inits = {};
+  /* Treatise.scene('ключ', function (sceneEl) { return { play, replay, visible? }; }) */
+  T.scene = function (key, fn) { inits[key] = fn; };
+  window.Treatise = T;
+
+  function boot() {
+    var api = new Map();
+    T.$$('.m-scene').forEach(function (scene) {
+      var f = inits[scene.dataset.scene]; if (!f) return;
+      try { var s = f(scene); api.set(scene, s);
+        var r = T.$('[data-replay]', scene); if (r) r.addEventListener('click', function () { s.replay(); });
+      } catch (e) { if (window.console) console.error('scene', scene.dataset.scene, e); }
+    });
+    /* сцена играет один раз, когда видно ≥25% */
+    if ('IntersectionObserver' in window) {
+      document.documentElement.classList.add('m-reveal');
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) {
+        var s = api.get(e.target); if (!s) return;
+        var enough = e.intersectionRatio >= 0.25 || e.intersectionRect.height > innerHeight * 0.45;
+        if (e.isIntersecting && enough && !e.target.dataset.played) { e.target.dataset.played = '1'; e.target.classList.add('is-seen'); s.play(); }
+        if (s.visible) s.visible(e.isIntersecting); }); }, { threshold: [0, 0.25, 0.5] });
+      api.forEach(function (_, scene) { io.observe(scene); });
+    } else api.forEach(function (s, scene) { scene.classList.add('is-seen'); s.play(); if (s.visible) s.visible(true); });
+
+    /* «Раскрыть все» для шторок главы */
+    T.$$('.drawers-bar').forEach(function (bar) {
+      var btn = T.$('[data-drawers-all]', bar), box = bar.nextElementSibling; if (!btn || !box) return;
+      var ds = T.$$('details.drawer', box); if (ds.length < 2) return;
+      btn.hidden = false;
+      btn.addEventListener('click', function () {
+        var open = ds.some(function (d) { return !d.open; });
+        ds.forEach(function (d) { d.open = open; }); btn.textContent = open ? 'Свернуть все' : 'Раскрыть все'; });
+    });
+
+    /* прогресс чтения и подсветка оглавления */
+    var bar = T.$('.read-progress'), links = T.$$('.toc a'), chapters = T.$$('.chapter');
+    function onScroll() {
+      var h = document.documentElement.scrollHeight - innerHeight;
+      if (bar && h > 0) bar.style.transform = 'scaleX(' + T.clamp(scrollY / h, 0, 1) + ')';
+      var cur = null; chapters.forEach(function (c) { if (c.getBoundingClientRect().top < innerHeight * 0.45) cur = c.id; });
+      links.forEach(function (a) { a.classList.toggle('is-on', a.getAttribute('href') === '#' + cur); });
+    }
+    addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else setTimeout(boot, 0);
+})();
+
+/* ===== сцена-образец «Порог»: заменить своими ===== */
+Treatise.scene('threshold', function (scene) {
+  var T = Treatise, range = T.$('#th-in', scene), bar = T.$('#th-bar', scene), sum = T.$('#th-sum', scene);
+  var touched = false, tm = T.Timers(), TH = 60;
+  var sp = T.Spring(0, 0.85, 0.5, function (v) { bar.setAttribute('width', (v / 100 * 300).toFixed(1)); });
+  function show(v) {
+    T.rangeFill(range); sp.to(v);
+    sum.innerHTML = v >= TH ? '<b>Сигнал прошёл.</b> Сумма ' + v + ' выше порога ' + TH + '.' : '<b>Сигнал не прошёл.</b> Сумме ' + v + ' не хватает ' + (TH - v) + ' до порога.';
+  }
+  range.addEventListener('input', function () { touched = true; tm.clear(); show(+range.value); });
+  show(+range.value); sp.set(+range.value);
+  return {
+    play: function () { if (touched) return;                 /* одно автодемо, пока сцену не трогали */
+      tm.add(function () { range.value = 80; show(80); }, 600); tm.add(function () { if (!touched) { range.value = 30; show(30); } }, 2200); },
+    replay: function () { touched = false; tm.clear(); range.value = 30; show(30); this.play(); },
+    visible: function () {}
+  };
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+{
+ "_комментарий": "Образец из 6 заданий (в рабочем файле их по одному на запрос и режим: 36 слов дали 48 прогонов). Запуск из корня проекта: python3 <скилл>/templates/apify/apify_jobs.py radar/<slug>/apify/jobs-main.json --max-usd 2 --threads 8. Потолок max_usd у каждого прогона, сумма потолков не больше --max-usd.",
+ "out": "raw",
+ "jobs": [
+  {
+   "name": "tt-q01-ru-fresh",
+   "actor": "apidojo~tiktok-scraper",
+   "max_usd": 0.04,
+   "trim": "tiktok",
+   "input": {
+    "keywords": [
+     "пилатес"
+    ],
+    "maxItems": 120,
+    "sortType": "RELEVANCE",
+    "dateRange": "LAST_SIX_MONTHS",
+    "includeSearchKeywords": true
+   }
+  },
+  {
+   "name": "tt-q02-ru-fresh",
+   "actor": "apidojo~tiktok-scraper",
+   "max_usd": 0.04,
+   "trim": "tiktok",
+   "input": {
+    "keywords": [
+     "пилатес реформер"
+    ],
+    "maxItems": 120,
+    "sortType": "RELEVANCE",
+    "dateRange": "LAST_SIX_MONTHS",
+    "includeSearchKeywords": true
+   }
+  },
+  {
+   "name": "tt-q13-loc-fresh",
+   "actor": "apidojo~tiktok-scraper",
+   "max_usd": 0.04,
+   "trim": "tiktok",
+   "input": {
+    "keywords": [
+     "пилатес москва"
+    ],
+    "maxItems": 120,
+    "sortType": "RELEVANCE",
+    "dateRange": "LAST_SIX_MONTHS",
+    "includeSearchKeywords": true
+   }
+  },
+  {
+   "name": "tt-q16-en-fresh",
+   "actor": "apidojo~tiktok-scraper",
+   "max_usd": 0.04,
+   "trim": "tiktok",
+   "input": {
+    "keywords": [
+     "reformer pilates"
+    ],
+    "maxItems": 120,
+    "sortType": "RELEVANCE",
+    "dateRange": "LAST_SIX_MONTHS",
+    "includeSearchKeywords": true
+   }
+  },
+  {
+   "name": "tt-q32-life-fresh",
+   "actor": "apidojo~tiktok-scraper",
+   "max_usd": 0.04,
+   "trim": "tiktok",
+   "input": {
+    "keywords": [
+     "pilates morning routine"
+    ],
+    "maxItems": 120,
+    "sortType": "RELEVANCE",
+    "dateRange": "LAST_SIX_MONTHS",
+    "includeSearchKeywords": true
+   }
+  },
+  {
+   "name": "tt-q01-ru-likes",
+   "actor": "apidojo~tiktok-scraper",
+   "max_usd": 0.04,
+   "trim": "tiktok",
+   "input": {
+    "keywords": [
+     "пилатес"
+    ],
+    "maxItems": 120,
+    "sortType": "MOST_LIKED",
+    "dateRange": "LAST_SIX_MONTHS",
+    "includeSearchKeywords": true
+   }
+  }
+ ]
+}
