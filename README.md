@@ -1,5 +1,10 @@
 # Набор скиллов и рабочих правил для Claude Code и Codex
 
+> **English:** 34 skills and working rules for Claude Code and Codex. Start with
+> [**Skill Scout**](.claude/skills/skill-scout/): it understands your task and searches popular GitHub
+> repositories for the best skills to do it. Install and usage in English are
+> [in its folder](.claude/skills/skill-scout/README.md). The rest of this page is in Russian.
+
 34 скилла и общие правила работы агента: анализ ниши TikTok с картой тем, русская редактура,
 нейминг, разбор бизнеса, планирование тремя агентами, наглядные статьи, LinkedIn и другое.
 Личных данных, клиентских материалов и ключей здесь нет: каждый подключает свои доступы.
